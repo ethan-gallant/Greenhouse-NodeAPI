@@ -1,0 +1,24 @@
+{
+  "name": "iotgreenhouseweb",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "start:dev": "nodemon ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-validator": "^6.2.0",
+    "morgan": "~1.9.1",
+    "mysql2": "^2.0.0",
+    "sequelize": "^5.21.2",
+    "body-parser": "latest"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4",
+    "sequelize-cli": "^5.5.1"
+  }
+}
