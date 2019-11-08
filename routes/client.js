@@ -115,14 +115,17 @@ router.post("/:id/water", [
     param("id").isInt({ gte: 0}),
     check("waterSeconds").isInt({ gte: 0}),
 ], function (req,res,next){
-    res.status(501).end()
+    const io = req.app.get('socketio');
 
+    res.status(501).end()
 //TODO: Water the thirsty boy for specified amount of seconds
 });
 
 router.get("/:id/status", [
     param("id").isInt({ gte: 0}),
 ], (req,res,next)=>{
+    const io = req.app.get('socketio');
+
     res.status(501).end()
 //TODO: Get current stats over websocket
 });
