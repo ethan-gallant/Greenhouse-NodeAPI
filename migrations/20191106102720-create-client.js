@@ -11,6 +11,7 @@ module.exports = {
             serial: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
             },
             maxWaterDaily: {
                 type: Sequelize.INTEGER,
@@ -22,6 +23,11 @@ module.exports = {
                 defaultValue: 2,
                 allowNull: false
             },
+            waterThreshold: {
+                type: Sequelize.INTEGER,
+                defaultValue: 320,
+                allowNull: false
+            },
             queriesHourly: {
                 type: Sequelize.INTEGER,
                 defaultValue: 240,
@@ -31,6 +37,10 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: 0,
                 allowNull: false
+            },
+            connectedAt: {
+                allowNull: false,
+                type: Sequelize.DATE
             },
             createdAt: {
                 allowNull: false,

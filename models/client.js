@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     connectedAt: DataTypes.DATE
   }, {});
   Client.associate = function(models) {
-    // associations can be defined here
+      Client.hasMany(models.Log, {foreignKey:"client_id"})
   };
   return Client;
 };

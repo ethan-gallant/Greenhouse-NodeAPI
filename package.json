@@ -1,21 +1,29 @@
 {
   "name": "iotgreenhouseweb",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "contributors":[
+    {
+      "name":"Ethan J. Gallant",
+      "email": "ethan@exclnetworks.com",
+      "url": "https://exclnetworks.com"
+    }
+  ],
   "dependencies": {
+    "body-parser": "latest",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-validator": "^6.2.0",
+    "moment": "^2.24.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.0.0",
-    "sequelize": "^5.21.2",
-    "body-parser": "latest"
+    "sequelize": "^5.21.2"
   },
   "devDependencies": {
     "nodemon": "^1.19.4",

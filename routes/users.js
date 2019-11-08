@@ -6,7 +6,7 @@ const User = require("../models").User;
 //TODO: Add authentication to all these endpoints
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    User.findAll().done((data) => {
+    User.findAll().then((data) => {
         res.send(data).end();
     });
 });
@@ -35,7 +35,7 @@ router.post('/', [
 });
 
 router.get('/:id', [
-    param("id").isInt({ gt: 0})
+    param("id").isInt({ gte: 0})
 ], function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -79,7 +79,7 @@ router.put('/:id', [
 
 
 router.delete('/:id', [
-    param("id").isInt({ gt: 0})
+    param("id").isInt({ gte: 0})
 ], function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

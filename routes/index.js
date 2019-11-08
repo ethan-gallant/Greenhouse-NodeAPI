@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const pjson = require('../package.json');
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-
-});
-
-router.post('/', function (req,res,next) {
-   res.send("posted");
+   res.send({
+       "api_version":pjson.version,
+       "description": "This is the base API url for IOT Greenhouse",
+       "contributors": pjson.contributors
+    }).end();
 });
 
 module.exports = router;
