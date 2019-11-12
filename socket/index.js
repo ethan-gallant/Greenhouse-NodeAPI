@@ -1,5 +1,7 @@
 const Client = require("../models").Client;
 const ClientRequest = require("../models").ClientRequest;
+const Log = require("../models").Log;
+const {Op} = require('sequelize');
 const moment = require('moment');
 
 module.exports = (io) => {
@@ -7,11 +9,12 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log("Client connected");
         socket.on('disconnect', function () {
-            console.log(JSON.stringify(socket.db_client));
-            if(socket.db_client){
+            if (socket.stats_interval)
+                clearInterval(socket.stats_interval);
+            if (socket.db_client) {
                 socket.db_client.update({
                     connectedAt: moment(),
-                    connected:false
+                    connected: false
                 });
             }
             console.log('Got disconnect!');
@@ -49,8 +52,11 @@ module.exports = (io) => {
                     socket.db_client = entries[0];
                     socket.db_client.update({
                         connectedAt: moment(),
-                        connected:true
+                        connected: true
                     });
+                    socket.stats_interval = setInterval(() => {
+                        socket.emit('send-stats')
+                    }, 60 * 1000 * 60 / entries[0].queriesHourly);
                     console.log("USER LOGIN SUCCESS")
                 }
                 else {
@@ -61,10 +67,43 @@ module.exports = (io) => {
 
         });
         socket.on('stats', function (data) {
-            console.log("DATA GIVEN VIA STATS" + JSON.stringify(data));
+            if (socket.db_client) {
+                socket.db_client.reload().then(() => {
+                    Log.create({
+                        soilMoisture: data.soil_moisture ? data.soil_moisture : 0,
+                        temperature: data.temperature ? data.temperature : 0,
+                        light: data.light ? data.light : 0,
+                        humidity: data.humidity ? data.humidity : 0,
+                        client_id: socket.db_client.id,
+                        forced: false
+                    }).then((newLog)=>{
+                        Log.findAll({
+                            where:{
+                                createdAt: {
+                                    [Op.gte]: moment().subtract(7, 'days').toDate()
+                                }
+                            }
+                        }).then((logRows) => {
+                            console.log(JSON.stringify(logRows));
+                            let waterAmount = 0;
+
+                            logRows.forEach((row) => {
+                                waterAmount += row.waterPumped;
+                            });
+                            console.log("WATER AMOUNT IS " + waterAmount);
+                            let meetsThreshold = socket.db_client.waterThreshold <= data.soil_moisture;
+                            let maxedWater = waterAmount < socket.db_client.maxWaterDaily;
+                            if (meetsThreshold && maxedWater) {
+                                console.log("CONDITIONS TRUE " + waterAmount);
+                                socket.emit("water-plant", socket.db_client.waterSeconds);
+                                newLog.update({waterPumped: 1});
+                            }
+                        });
+                    });
+                    console.log("DATA GIVEN VIA STATS" + JSON.stringify(data));
+                });
+            }
         });
-
-
     });
 };
 

@@ -8,9 +8,22 @@ const ClientRequest = require("../models").ClientRequest;
 //TODO: Add authentication to all these endpoints
 /* GET clients listing. */
 router.get('/', function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to view all clients."});
+        return;
+    }
     Client.findAll().then((data) => {
         res.send(data).end();
     });
+});
+router.get('/requests', function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to view client requests."});
+        return;
+    }
+    ClientRequest.findAll().then((data) => {
+        res.send(data).end();
+    }).catch((err)=> res.status(500).send(data).end());
 });
 
 router.post('/', [
@@ -25,7 +38,10 @@ router.post('/', [
     //how often to gather stats from this node every hour
     check('queriesHourly').isInt({min:1,max:18000})
 ], function (req, res, next) {
-
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to create a client."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -51,6 +67,10 @@ router.post('/', [
 router.get('/:id', [
     param("id").isInt({ gte: 0})
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to view a client."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -77,6 +97,10 @@ router.put('/:id', [
     //how often to gather stats from this node every hour
     check('queriesHourly').isInt({min:1,max:18000}).optional()
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to update a client."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -99,6 +123,11 @@ router.put('/:id', [
 router.delete('/:id', [
     param("id").isInt({ gte: 0})
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to delete a client."});
+        return;
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -123,7 +152,10 @@ router.post("/:id/water", [
     param("id").isInt({ gte: 0}),
     check("waterSeconds").isInt({ gte: 0}),
 ], function (req,res,next){
-    const io = req.app.get('socketio');
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to force water a client."});
+        return;
+    }
 
     res.status(501).end()
 //TODO: Water the thirsty boy for specified amount of seconds
@@ -132,7 +164,11 @@ router.post("/:id/water", [
 router.get("/:id/status", [
     param("id").isInt({ gte: 0}),
 ], (req,res,next)=>{
-    const io = req.app.get('socketio');
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to force status a client."});
+        return;
+    }
+
 
     res.status(501).end()
 //TODO: Get current stats over websocket

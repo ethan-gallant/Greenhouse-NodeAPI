@@ -3,9 +3,12 @@ const router = express.Router();
 const {check,param ,validationResult} = require('express-validator');
 
 const User = require("../models").User;
-//TODO: Add authentication to all these endpoints
 /* GET users listing. */
 router.get('/', function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to get all users."});
+        return;
+    }
     User.findAll().then((data) => {
         res.send(data).end();
     });
@@ -19,7 +22,10 @@ router.post('/', [
     //
     check('isadmin').isBoolean()
 ], function (req, res, next) {
-
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to create users."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -37,6 +43,11 @@ router.post('/', [
 router.get('/:id', [
     param("id").isInt({ gte: 0})
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to get specific."});
+        return;
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -59,6 +70,10 @@ router.put('/:id', [
     //
     check('isadmin').isBoolean()
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to update users."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -81,6 +96,10 @@ router.put('/:id', [
 router.delete('/:id', [
     param("id").isInt({ gte: 0})
 ], function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to delete users."});
+        return;
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
