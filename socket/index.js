@@ -39,6 +39,8 @@ module.exports = (io) => {
                     }).then(function (requestEntries) {
                         if (requestEntries.length <= 0) {
                             ClientRequest.create({mac: data.serial});
+                        } else {
+                            requestEntries[0].update(); // Set our updated at time to be now
                         }
                     });
                 }
