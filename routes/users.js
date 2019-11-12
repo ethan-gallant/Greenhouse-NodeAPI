@@ -43,7 +43,7 @@ router.post('/', [
 router.get('/:id', [
     param("id").isInt({ gte: 0})
 ], function (req, res, next) {
-    if (!req.is_admin) {
+    if (!req.is_admin && req.params.id !== req.user_id) {
         res.json({success: false, message: "You must be an admin to get specific."});
         return;
     }
@@ -70,7 +70,7 @@ router.put('/:id', [
     //
     check('isadmin').isBoolean()
 ], function (req, res, next) {
-    if (!req.is_admin) {
+    if (!req.is_admin && req.params.id !== req.user_id) {
         res.json({success: false, message: "You must be an admin to update users."});
         return;
     }
