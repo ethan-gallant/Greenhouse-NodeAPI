@@ -3,6 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 const {check,param ,validationResult} = require('express-validator');
 const Log = require("../models").Log;
+const {Op} = require('sequelize');
 
 
 /* GET all logs of all clients page. */
@@ -32,7 +33,9 @@ router.get('/dtRange',[
 
     Log.findAll({
         where: {
-            createdAt: { gte: start_date.toISOString(), lte: end_date.toISOString()},
+            createdAt: {
+                [Op.gte]: start_date.toISOString(),
+                [Op.lte]: end_date.toISOString()},
         }
     }).then(data=>res.status(200).send({
         "start_date": start_date.toISOString(),
@@ -77,7 +80,10 @@ router.get('/:clientId/dtRange',[
     Log.findAll({
         where: {
             client_id:req.params.clientId,
-            createdAt: { gte: start_date.toISOString(), lte: end_date.toISOString()},
+            createdAt: {
+                [Op.gte]: start_date.toISOString(),
+                [Op.lte]: end_date.toISOString(),
+            },
         }
     }).then(data=>res.status(200).send({
         "start_date": start_date.toISOString(),
