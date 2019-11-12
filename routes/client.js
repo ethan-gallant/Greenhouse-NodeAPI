@@ -3,6 +3,8 @@ const router = express.Router();
 const {check, param, validationResult} = require('express-validator');
 
 const Client = require("../models").Client;
+const ClientRequest = require("../models").ClientRequest;
+
 //TODO: Add authentication to all these endpoints
 /* GET clients listing. */
 router.get('/', function (req, res, next) {
@@ -28,6 +30,12 @@ router.post('/', [
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
+
+    ClientRequest.destroy({
+        where: {
+            mac: req.body.serial
+        }
+    });
 
     Client.create({
         serial: req.body.serial,
