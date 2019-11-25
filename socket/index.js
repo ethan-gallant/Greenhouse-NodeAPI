@@ -84,14 +84,13 @@ module.exports = (io) => {
                                 }
                             }
                         }).then((logRows) => {
-                            console.log(JSON.stringify(logRows));
                             let waterAmount = 0;
 
                             logRows.forEach((row) => {
                                 waterAmount += row.waterPumped;
                             });
                             console.log("WATER AMOUNT IS " + waterAmount);
-                            let meetsThreshold = socket.db_client.waterThreshold <= data.soil_moisture;
+                            let meetsThreshold = socket.db_client.waterThreshold >= data.soil_moisture;
                             let maxedWater = waterAmount < socket.db_client.maxWaterDaily;
                             if (meetsThreshold && maxedWater) {
                                 console.log("CONDITIONS TRUE " + waterAmount);
@@ -100,7 +99,7 @@ module.exports = (io) => {
                             }
                         });
                     });
-                    console.log("DATA GIVEN VIA STATS" + JSON.stringify(data));
+                    console.log("DATA GIVEN VIA STATS FROM " + socket.db_client.serial + " :" + JSON.stringify(data));
                 });
             }
         });
