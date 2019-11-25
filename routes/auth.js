@@ -51,6 +51,16 @@ router.post("/renew", jwthandler.verifyJWT, (req, res, next) => {
     jwthandler.blacklistToken(req.token);
 });
 
+router.get('/apikeys', function (req, res, next) {
+    if (!req.is_admin) {
+        res.json({success: false, message: "You must be an admin to get all api keys."});
+        return;
+    }
+    ApiKey.findAll().then((data) => {
+        res.send(data).end();
+    });
+});
+
 router.post('/apikeys', [
     jwthandler.verifyJWT,
     check('name').isLength({min: 1}),
